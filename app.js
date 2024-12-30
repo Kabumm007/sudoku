@@ -4,8 +4,10 @@ function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
     
-(async ()=>{
-    await Sleep(10000)
+
+document.getElementById("start").onclick = start;
+
+async function start(){
     let a=0
     let b=0
     let c=0
@@ -20,4 +22,4 @@ function Sleep(milliseconds) {
         else  korrektfeld.innerHTML="falsch"
         await Sleep(1000)
     }
-})()
+}
