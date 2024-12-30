@@ -1,37 +1,27 @@
-# Calculator
+# Sudoku
 
-A simple calculator web application built using HTML, CSS, and JavaScript.
+This is a progressive web app templat which is going to be developed into
+a sudoku game, that can run on Windows, OSX, Linux, Android and IPhone.
+Currently it is a multiplication trainer but I am working on changing it into
+a sudoku game.
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
 - [Getting Started](#getting-started)
-- [Usage](#usage)
 - [License](#license)
 
-## Introduction
-
-This project is a basic calculator application that performs simple arithmetic operations. The calculator includes functionalities for addition, subtraction, multiplication, and division.
-
-## Features
-
-- Addition, subtraction, multiplication, and division operations.
-- Clear screen functionality.
-- Responsive design.
-
-## Getting Started
-
-### Prerequisites
+### getting-started
 
 To run this project, you will need a web browser.
+And then click on the install button right next to the input bar.
+Or go to setting and click on install app. Best use chrome.
 
 ### Installation
 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/calculator.git
+    git clone https://github.com/kabumm007/sudoku.git
     ```
 
 2. Navigate to the project directory:
@@ -41,13 +31,6 @@ To run this project, you will need a web browser.
     ```
 
 3. Open the `index.html` file in your web browser.
-
-## Usage
-
-1. Open the calculator in your web browser.
-2. Use the buttons to input numbers and perform operations.
-3. Click the `=` button to see the result.
-4. Click the `C` button to clear the screen.
 
 ## Code Structure
 
