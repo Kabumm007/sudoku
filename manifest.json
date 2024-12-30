@@ -1,6 +1,6 @@
 {
-  "name": "SIcalc",
-  "short_name": "SIcalc",
+  "name": "Sudoku",
+  "short_name": "Sudoku",
   "icons": [
     {
       "src": "./images/icons/icon-128x128.png",
