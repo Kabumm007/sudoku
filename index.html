@@ -30,7 +30,7 @@
 	</noscript>
 
 	<script>
-        let serviceworkeractivate=true;
+        let serviceworkeractivate=false;
 		if (serviceworkeractivate && "serviceWorker" in navigator) {
 			window.addEventListener("load", () => {
 				navigator.serviceWorker.register("./service-worker.js").then((reg) => {
@@ -39,7 +39,10 @@
 			});
 		}
 	</script>
-    <H1>Hallo</H1>
+<!-- erst an hier ändern-->
+    <H1 id="korrekt">Hallo</H1>
+
+<!-- nur bis hier ändern-->
     
     <script src="app.js"></script>
 </body>
