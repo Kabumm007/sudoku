@@ -16,6 +16,7 @@ To run this project, you will need a web browser.
 And then click on the install button right next to the input bar.
 Or go to setting and click on install app. Best use chrome.
 
+You can play it here https://kabumm007.github.io/sudoku/
 ### Installation
 
 1. Clone the repository:
