@@ -5,6 +5,7 @@ function Sleep(milliseconds) {
 }
     
 (async ()=>{
+    await Sleep(10000)
     let a=0
     let b=0
     let c=0
