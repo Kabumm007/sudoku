@@ -1,5 +1,16 @@
+
+
+body {
+   
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Höhe des Viewports, damit es auch vertikal funktioniert */
+    margin: 0; /* Entfernt Standardabstände */
+}
+
 #sudoku {
     border-collapse: collapse;
+    margin-top: 20px; /* Optional: Fügt etwas Abstand oben hinzu */
 }
 
 #sudoku td {
