@@ -98,14 +98,46 @@ async function start(){
         let j=Math.floor(Math.random()*9);
         field[i][j]=undefined;
     }
-    
+    let html="";
     for(let i=0;i<9;i++){
+        html += "<tr>";
         for(let j=0;j<9;j++){
-            docresult.innerHTML+=field[i][j]===undefined?" ":field[i][j];	
+            html+="<td>"+field[i][j]===undefined?" ":field[i][j]+"</td>";	
         }
-        docresult.innerHTML+="<br>";
+        html += "</tr>";
+        
     }
-
+        docresult.innerHTML=html;
 
 
 }
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
