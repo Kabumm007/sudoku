@@ -102,7 +102,7 @@ async function start(){
     for(let i=0;i<9;i++){
         html += "<tr>";
         for(let j=0;j<9;j++){
-            html+="<td>"+field[i][j]===undefined?" ":field[i][j]+"</td>";	
+            html+="<td>"+(field[i][j]===undefined?" ":field[i][j])+"</td>";	
         }
         html += "</tr>";
         
