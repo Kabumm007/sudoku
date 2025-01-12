@@ -6,7 +6,6 @@ function Sleep(milliseconds) {
     
 
 document.getElementById("start").onclick = start;
-document.getElementById("solve").onclick = solve;
 
 function generateNumber(zeilenarray){
     let ziffernarray=[];
@@ -41,12 +40,10 @@ function killNumbers(zeilenarray2,field,zeile,spalte){
     }
     return zeilenarray;
 }
-var field;
 async function start(){
-    document.getElementById("info").innerHTML="";
     let docresult=document.getElementById("sudoku");
     docresult.innerHTML="";
-    field=new Array(9);
+    let field=new Array(9);
     for(let i=0;i<9;i++){
         field[i]=new Array(9);
     }
@@ -105,7 +102,7 @@ async function start(){
     for(let i=0;i<9;i++){
         html += "<tr>";
         for(let j=0;j<9;j++){
-            let inputfield="<input id='"+(j+1)+"_"+(i+1)+"' type='number' min='1' max='9'>"
+            let inputfield="<input type='number' min='1' max='9'>"
             html+="<td>"+(field[i][j]===undefined?inputfield:field[i][j])+"</td>";	
         }
         html += "</tr>";
@@ -134,20 +131,18 @@ class Option{
 
 class DancingLinks{
     constructor(){
-        this.optionArrays=[];
         this.items=[new Item("",0,0)]
         this.itemMap=new Map();
         this.options=[new Option(0,0,0),new Option(0,0,0)];
         this.currentoptionstart=0;
         this.spacercnt=0;
-        this.forcecnt=0;
     }
     pushItem(itemName){
         if(this.itemMap.has(itemName)){
             console.error("Item already exists");
             return false;
         }
-        this.itemMap.set(itemName,{"cnt":0,"index":this.items.length});
+        this.itemMap.set(itemName,this.items.length);
         let item=new Item(itemName,this.items.length-1,0);
         this.items[this.items.length-1].rlink=this.items.length;
         this.items[0].llink=this.items.length
@@ -252,23 +247,16 @@ class DancingLinks{
             }
             solution.push(s);
         }
-        return solution;
+        console.log(solution);
     }
     solve(){//algorithm X: D. Knuth The Art of Computer Programming, Vol 4b, p69, Addison-Wesley, 2011
-        this.finalizeOptions();
         let x=new Array(this.items.length).fill(0);
         //X1:Initialize
-        let lmin=0;
-        let sol=[];
-        for(let l=0,dir=1,i,j,p;
-            l>=lmin;
-            lmin+=(((dir>0)&&(l<this.forcecnt))?1:0),
-            l+=dir
-        ){//X1: initialize	
+        for(let l=0,dir=1,i,j,p;l>=0;l+=dir){//X1: initialize
             if(dir>0){
                 //X2: enter level l
                 if(this.items[0].rlink===0){
-                    sol.push(this._printSolution(x,l-1));
+                    this._printSolution(x,l-1);
                     dir=-1;
                     continue;//X8,X6
                 }
@@ -276,6 +264,7 @@ class DancingLinks{
                 i=this.items[0].rlink;//this._minimalRemainingOptionsHeuristic();
                 //x4: cover item
                 this._cover(i);
+                console.log("cover"+i);
                 x[l]=this.options[i].dlink;
             }else{//dir<0
                 //X6: Try again
@@ -285,6 +274,7 @@ class DancingLinks{
                     if(j<=0){//p is a spacer
                         p=this.options[p].dlink;
                     }else{
+                        console.log("X6: uncover"+j+""+l);
                         this._uncover(j);
                         p--;
                     }
@@ -295,7 +285,8 @@ class DancingLinks{
             //x5: try x[l]
             if(x[l]===i){
                 //x7: backtrack
-                this._uncover(i);
+                console.log("X7 uncover"+i+""+l);
+                this._uncover(i);   
                 dir=-1;
                 continue;
             }else{//x5...
@@ -305,6 +296,7 @@ class DancingLinks{
                     if(j<=0){//p is a spacer
                         p=this.options[p].ulink;
                     }else{
+                        console.log("X5 cover"+i+""+l);
                         this._cover(j);
                         p++;
                     }
@@ -314,138 +306,29 @@ class DancingLinks{
             }
 
         }
-        return sol;
 
     }
-    setOption(optionArray,force=false){
+    setOption(optionArray){
         optionArray.forEach((option)=>{
             if(!this.itemMap.has(option)){
                 console.error("Item "+option+" does not exist!");
                 return false;
             }
-            if(force) {
-                if(this.itemMap.get(option).cnt<0){
-                    console.error("Item "+option+" is already forced!");
-                    return false;
-                }
-            }
         });
+        this._modSpacer(optionArray.length);
         optionArray.forEach((option)=>{
-            if(force) this.itemMap.get(option).cnt--;
-            else if(this.itemMap.get(option).cnt>=0) this.itemMap.get(option).cnt++;
+            let itemnum=this.itemMap.get(option);
+            this._addNode(itemnum);
+            this.options[itemnum].top++;
         });
-        if(force) this.optionArrays.unshift(optionArray.slice());
-        else this.optionArrays.push(optionArray.slice())
-        if(force) this.forcecnt++;	
-    }
-    finalizeOptions(){  
-        this.optimizeTable();
-        this.optionArrays.forEach((optionArray)=>{
-            this._modSpacer(optionArray.length);
-            let itemnumArr=[];
-            optionArray.forEach((option)=>{
-                itemnumArr.push(this.itemMap.get(option).index);
-            });
-            itemnumArr.sort((a,b)=>a-b);
-            itemnumArr.forEach((itemnum)=>{
-                this._addNode(itemnum);
-                this.options[itemnum].top++;
-            });
-            this._addSpacer();
-        });
+        this._addSpacer();
         return true;
     }
-    optimizeTable(){
-        this.spacercnt=0;
-        this.currentoptionstart=0;
-        let arr=[...this.itemMap.entries()].sort((a,b)=>a[1].cnt-b[1].cnt)
-        this.itemMap=new Map(arr.map((obj,index)=>[obj[0],{"cnt":obj[1].cnt,"index":index+1}]));
-        this.options=this.options.slice(0,this.items.length+1);
-        this.itemMap.forEach((value,key)=>{
-            this.items[value.index].name=key;
-            this.options[value.index].top=Math.abs(value.cnt);
-            this.options[value.index].ulink=value.index;
-            this.options[value.index].dlink=value.index;
-        });
-    }
-};
+
+}
 
 let dl=new DancingLinks();
 
-class SudokuSolver{
-    constructor(){
-        this.dl=new DancingLinks();
-        this.generateItems();
-        this.generateOptions();
-        this.inputField(field);
-    }
-    generateItems(){
-        for(let y=1;y<=9;++y){
-            for(let x=1;x<=9;x++){
-                this.dl.pushItem("field"+x+"_"+y);
-            }
-        }
-        for(let x=1;x<=9;++x){
-            for(let n=1;n<=9;n++){
-                this.dl.pushItem("column"+x+"num"+n);
-            }
-        }
-        for(let y=1;y<=9;y++){
-            for(let n=1;n<=9;n++){
-                this.dl.pushItem("row"+y+"num"+n);
-            }
-        }
-        for(let i=1;i<=9;i++){
-            for(let n=1;n<=9;n++){
-                this.dl.pushItem("block"+i+"num"+n);
-            }
-        }
-
-    }
-    optionEntry(x,y,n){
-        return ["field"+x+"_"+y,"column"+x+"num"+n,"row"+y+"num"+n,"block"+(Math.floor((y-1)/3)*3+Math.floor((x-1)/3)+1)+"num"+n]
-    }
-    generateOptions(){
-        for(let x=1;x<=9;x++){
-            for(let y=1;y<=9;y++){
-                for(let n=1;n<=9;n++){
-                    this.dl.setOption(this.optionEntry(x,y,n));
-                }
-            }
-        }
-    }
-    inputField(field){
-        let opt=[];
-        for(let x=0;x<9;x++){
-            for(let y=0;y<9;y++){
-                if(field[y][x]!==undefined){
-                    opt.push(...this.optionEntry(x+1,y+1,field[y][x]));
-                }
-            }
-        }
-        this.dl.setOption(opt,true);
-    }
-    solve(){
-        return this.dl.solve();
-    }
-}
-var ss;
-let cnt=0;
-function solve(){
-    ss=new SudokuSolver();
-
-    let sol=ss.solve();
-    console.log("solutions: "+sol.length)
-    document.getElementById("info").innerHTML="Solutions: "+sol.length;
-    let solnr=cnt%sol.length;
-    cnt++;
-    for(i=1;i<sol[solnr].length;i++){
-        console.log(sol[solnr][i][5]+" "+sol[solnr][i][7]+" "+sol[solnr][i][36]);
-        document.getElementById(sol[solnr][i][5]+"_"+sol[solnr][i][7]).value=sol[solnr][i][36];
-    }
-    //
-}   
- /*   
 dl.pushItem("e");
 dl.pushItem("a");
 dl.pushItem("b");
@@ -453,7 +336,6 @@ dl.pushItem("c");
 dl.pushItem("d");
 dl.pushItem("f");
 dl.pushItem("g");
-dl.pushItem("h");
 
 dl.setOption(["e"]);
 dl.setOption(["c","e"]);
@@ -464,9 +346,6 @@ dl.setOption(["b","g"]);
 dl.setOption(["d","e","g"]);
 
 dl.setOption(["f"]);
-dl.setOption(["h"]);
-dl.setOption(["h","e"]);
-*/
 /*
 
 dl.pushItem("a");
@@ -487,6 +366,6 @@ dl.setOption(["d","e","g"]);
 dl.setOption(["e"]);
 dl.setOption(["f"]);
 */
-
+console.log(dl.options)
 
 
