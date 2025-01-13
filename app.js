@@ -256,35 +256,27 @@ class DancingLinks {
     }
     solve() {//algorithm X: D. Knuth The Art of Computer Programming, Vol 4b, p69, Addison-Wesley, 2011
         this.finalizeOptions();
-        let x = new Array(this.items.length).fill(0);
-        //X1:Initialize
-        let lmin = 0;
-        let sol = [];
-        for (let l = 0, dir = 1, i, j, p;
+        let x = new Array(this.items.length).fill(0),sol = [];
+        for (let l = 0, lmin=0, dir = 1, i, j, p;
             l >= lmin;
-            lmin += (((dir > 0) && (l < this.forcecnt)) ? 1 : 0),
+            ((dir > 0) && (l < this.forcecnt)) && ++lmin,//short circuit increment needed for forced options
             l += dir
-        ) {//X1: initialize	
-            if (dir > 0) {
-                //X2: enter level l
+        ) {                                         //X1: initialize	
+            if (dir > 0) {                          //X2: enter level l
                 if (this.items[0].rlink === 0) {
                     sol.push(this._printSolution(x, l - 1));
                     dir = -1;
                     continue;//X8,X6
                 }
-                //x3: choose item
-                i = this.items[0].rlink;//this._minimalRemainingOptionsHeuristic();
-                //x4: cover item
-                this._cover(i);
+                i = this.items[0].rlink;            //x3: choose item //this._minimalRemainingOptionsHeuristic();
+                this._cover(i);                     //x4: cover item
                 x[l] = this.options[i].dlink;
-            } else {//dir<0
-                //X6: Try again
+            } else {                                //dir<0 then X6: Try again
                 p = x[l] - 1;
                 while (p !== x[l]) {
                     j = this.options[p].top;
-                    if (j <= 0) {//p is a spacer
-                        p = this.options[p].dlink;
-                    } else {
+                    if (j <= 0) p = this.options[p].dlink; //p is a spacer
+                    else {
                         this._uncover(j);
                         p--;
                     }
@@ -292,19 +284,16 @@ class DancingLinks {
                 i = this.options[x[l]].top;
                 x[l] = this.options[x[l]].dlink;
             }
-            //x5: try x[l]
-            if (x[l] === i) {
-                //x7: backtrack
-                this._uncover(i);
+            if (x[l] === i) {                       //x5: try x[l]
+                this._uncover(i);                   //x7: backtrack
                 dir = -1;
                 continue;
-            } else {//x5...
+            } else {                                //x5...
                 p = x[l] + 1;
                 while (p !== x[l]) {
                     j = this.options[p].top;
-                    if (j <= 0) {//p is a spacer
-                        p = this.options[p].ulink;
-                    } else {
+                    if (j <= 0) p = this.options[p].ulink;//p is a spacer
+                    else {
                         this._cover(j);
                         p++;
                     }
