@@ -1,9 +1,6 @@
-
-
 function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
-
 
 document.getElementById("start").onclick = start;
 document.getElementById("solve").onclick = solve;
@@ -77,7 +74,6 @@ async function start() {
                     }
                     valid = true;
                     break;
-
                 }
                 field[i][j] = wuerfle(ziffernarray);
                 copyzeilenarray[field[i][j] - 1] = false;
@@ -129,8 +125,6 @@ class Option {
         this.dlink = dlink;
     }
 }
-
-
 
 class DancingLinks {
     constructor() {
@@ -186,19 +180,7 @@ class DancingLinks {
         this.items[r].llink = l;
     }
     _reorderItemsAfterDec(i) {//for sudoku this gives typically a factor of 2 speedup
-      //  return;
         if(this.items[i].llink===0) return;
-        /*
-        console.log("reorderItems "+i+" "+this.items[i].name+"ll"+this.items[i].llink);
-        
-        let s="";
-        for(let j=this.items[0].rlink;j!==0;j=this.items[j].rlink){
-            if(j>=this.items.length){ console.error("!!!"+j)  }
-            s+=this.items[j].name;
-            s+="("+this.options[j].top+")";
-        }
-        console.log(s);
-        */
         let j=this.items[i].llink;
         if(this.options[i].top>=this.options[j].top) return;
         while(true){
@@ -209,32 +191,10 @@ class DancingLinks {
                 break;
             }
         }
-       // for(let j=this.items[0].rlink;this.items[j].rlink!==0;j=this.items[j].rlink){
-        //    if(this.items[j].top>this.items[this.items[j].rlink].top) console.error("!!!"+j);
-       // }
-        /*
-                s="";
-        for(let j=this.items[0].rlink;j!==0;j=this.items[j].rlink){
-            s+=this.items[j].name;
-            s+="("+this.options[j].top+")";
-        }
-        console.log(s);
-        */
+          // for(let j=this.items[0].rlink;this.items[j].rlink!==0;j=this.items[j].rlink) if(this.items[j].top>this.items[this.items[j].rlink].top) console.error("!!!"+j); 
     }
     _reorderItemsAfterInc(i) {//for sudoku this gives typically a factor of 2 speedup
-        //  return;
           if(this.items[i].llink===0) return;
-          /*
-          console.log("reorderItems "+i+" "+this.items[i].name+"ll"+this.items[i].llink);
-          
-          let s="";
-          for(let j=this.items[0].rlink;j!==0;j=this.items[j].rlink){
-              if(j>=this.items.length){ console.error("!!!"+j)  }
-              s+=this.items[j].name;
-              s+="("+this.options[j].top+")";
-          }
-          console.log(s);
-          */
           let j=this.items[i].rlink;
           if(this.options[i].top<=this.options[j].top) return;
           while(true){
@@ -245,15 +205,7 @@ class DancingLinks {
                   break;
               }
           }
-          /*
-                  s="";
-        */
-
-         // for(let j=this.items[0].rlink;this.items[j].rlink!==0;j=this.items[j].rlink){
-          //    if(this.items[j].top>this.items[this.items[j].rlink].top) console.error("!!!"+j);
-         // }
-         
-          
+         // for(let j=this.items[0].rlink;this.items[j].rlink!==0;j=this.items[j].rlink) if(this.items[j].top>this.items[this.items[j].rlink].top) console.error("!!!"+j); 
       }
     _hide(optionnum) {
         let q = optionnum + 1;
@@ -303,8 +255,6 @@ class DancingLinks {
     }
     _swap(i,j,len){
         if(i===j) return;
-        // (i-1).rlink=i, i.llink=i-1, i.rlink=i+1, (i+1).llink=i,   (j-1).rlink=j, j.llink=j-1, j.rlink=j+1, (j+1).llink=j. 
-        // (i-1).rlink=j, j.llink=i-1, j.rlink=i+1, (i+1).llink=j,   (j-1).rlink=i, i.llink=j-1, i.rlink=j+1, (j+1).llink=i.
         let il=this.items[i].llink;
         let ir=this.items[i].rlink;
         let jl=this.items[j].llink;
@@ -393,18 +343,6 @@ class DancingLinks {
                     dir = -1;
                     continue;//X8,X6
                 }
-                /*i=0;
-                while(1){//this works if we do not shuffle or reorder
-                    i = this.items[i].rlink;            //x3: choose item //this._minimalRemainingOptionsHeuristic();
-                    if(Math.random()<0.5) break;
-                    if(i===0) {
-                        i=this.items[i].rlink; 
-                        break;
-                    }
-                }
-                
-                console.log("cover"+i)
-                */
                 i = this.items[0].rlink; //this works if we do not shuffle or reorder
                 
                 this._cover(i);                     //x4: cover item
@@ -428,7 +366,6 @@ class DancingLinks {
                 continue;
             } else {                                //x5...
                 p = x[l] + 1;
-//                console.log(p)//we are hanging here if we do not order the items or if we reorder
                 while (p !== x[l]) {
                     j = this.options[p].top;
                     if (j <= 0) p = this.options[p].ulink;//p is a spacer
@@ -480,26 +417,6 @@ class DancingLinks {
         });
         return true;
     }
-    
-    /*
-    finalizeOptions2() {
-        this.optimizeTable();
-        this.optionArrays.forEach((optionArray) => {
-            this._modSpacer(optionArray.length);
-            let itemnumArr = [];
-            optionArray.forEach((option) => {
-                itemnumArr.push(this.itemMap.get(option).index);
-            });
-            itemnumArr.sort((a, b) => a - b);
-            itemnumArr.forEach((itemnum) => {
-                this._addNode(itemnum);
-                this.options[itemnum].top++;
-            });
-            this._addSpacer();
-        });
-        return true;
-    }
-    */
     optimizeTable() {
         this.spacercnt = 0;
         this.currentoptionstart = 0;
@@ -516,8 +433,6 @@ class DancingLinks {
         });
     }
 };
-
-
 
 class SudokuSolver {
     constructor() {
@@ -579,19 +494,17 @@ var ss;
 let cnt = 0;
 function solve() {
     ss = new SudokuSolver();
-
     let sol = ss.solve();
     console.log("solutions: " + sol.length)
     document.getElementById("info").innerHTML = "Solutions: " + sol.length;
     let solnr = cnt % sol.length;
     cnt++;
     for (i = 1; i < sol[solnr].length; i++) {
-        //console.log(sol[solnr][i]);
-        //console.log(sol[solnr][i][1] + " " + sol[solnr][i][3] + " " + sol[solnr][i][7]);
-        document.getElementById(sol[solnr][i][1] + "_" + sol[solnr][i][3]).value = sol[solnr][i][7];
+         document.getElementById(sol[solnr][i][1] + "_" + sol[solnr][i][3]).value = sol[solnr][i][7];
     }
-    //
 }
+
+/*
 let dl = new DancingLinks();
 function test(){
     while(true){
@@ -599,7 +512,6 @@ function test(){
         solve()
     }
 }
-/*
 dl.pushItem("e");
 dl.pushItem("a");
 dl.pushItem("b");
@@ -622,7 +534,7 @@ dl.setOption(["h"]);
 dl.setOption(["h","e"]);
 */
 
-
+/*
 dl.pushItem("a");
 dl.pushItem("b");
 dl.pushItem("c");
@@ -630,7 +542,6 @@ dl.pushItem("d");
 dl.pushItem("e");
 dl.pushItem("f");
 dl.pushItem("g");
-
 
 dl.setOption(["c","e"]);
 dl.setOption(["a","d","g"]);
@@ -640,7 +551,4 @@ dl.setOption(["b","g"]);
 dl.setOption(["d","e","g"]);
 dl.setOption(["e"]);
 dl.setOption(["f"]);
-
-
-
-
+*/
