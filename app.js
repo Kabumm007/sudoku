@@ -2,8 +2,19 @@ function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
+function update(){
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+    if (reg) {
+      reg.unregister().then(function() { window.location.reload(true); });
+    } else {
+       window.location.reload(true);
+    }
+  });
+}
+
 document.getElementById("start").onclick = start;
 document.getElementById("solve").onclick = solve;
+document.getElementById("update").onclick = update;
 
 function generateNumber(zeilenarray) {
     let ziffernarray = [];
@@ -130,21 +141,26 @@ class DancingLinks {
     constructor() {
         this.optionArrays = [];
         this.items = [new Item("", 0, 0)]
+        this.secondaryitems = [];
         this.itemMap = new Map();
         this.options = [new Option(0, 0, 0), new Option(0, 0, 0)];
         this.currentoptionstart = 0;
         this.spacercnt = 0;
         this.forcecnt = 0;
+        this.lastprimaryitemnum=0;
     }
-    pushItem(itemName) {
+    pushItem(itemName,primary=true) {
         if (this.itemMap.has(itemName)) {
             console.error("Item already exists");
             return false;
         }
         this.itemMap.set(itemName, { "cnt": 0, "index": this.items.length });
         let item = new Item(itemName, this.items.length - 1, 0);
-        this.items[this.items.length - 1].rlink = this.items.length;
-        this.items[0].llink = this.items.length
+        if(primary){
+            this.items[this.lastprimaryitemnum].rlink = this.items.length;
+            this.items[0].llink = this.items.length;
+            this.lastprimaryitemnum=this.items.length;
+        }
         this.items.push(item);
         let option = this.options[this.options.length - 1];
         option.top = 0;
@@ -407,7 +423,7 @@ class DancingLinks {
         this.optimizeTable();
         this.optionArrays.forEach((optionArray) => {
             this._modSpacer(optionArray.length);
-            let itemnumArr = [];
+
             optionArray.forEach((option) => {
                 let itemnum=this.itemMap.get(option).index;
                 this._addNode(itemnum);
@@ -504,7 +520,7 @@ function solve() {
     }
 }
 
-/*
+
 let dl = new DancingLinks();
 function test(){
     while(true){
@@ -512,6 +528,7 @@ function test(){
         solve()
     }
 }
+/*
 dl.pushItem("e");
 dl.pushItem("a");
 dl.pushItem("b");
@@ -534,12 +551,12 @@ dl.setOption(["h"]);
 dl.setOption(["h","e"]);
 */
 
-/*
+
 dl.pushItem("a");
 dl.pushItem("b");
 dl.pushItem("c");
 dl.pushItem("d");
-dl.pushItem("e");
+dl.pushItem("e",false);
 dl.pushItem("f");
 dl.pushItem("g");
 
@@ -551,4 +568,3 @@ dl.setOption(["b","g"]);
 dl.setOption(["d","e","g"]);
 dl.setOption(["e"]);
 dl.setOption(["f"]);
-*/

@@ -30,7 +30,7 @@
 	</noscript>
 
 	<script>
-        let serviceworkeractivate=false;
+        let serviceworkeractivate=true;
 		if (serviceworkeractivate && "serviceWorker" in navigator) {
 			window.addEventListener("load", () => {
 				navigator.serviceWorker.register("./service-worker.js").then((reg) => {
@@ -44,7 +44,7 @@
 		Hello my friend you can install the app in the top right corner. Press Start to generate a sudoku puzzle. Press solve to calculate a solution using Knuth's Algorithm X.
 		Sometimes there are more than one solutions then press solve multiple times to see them all.
 	</H5>
-	<button id="start">Start</button><button id="solve">Solve</button><br/>	
+	<button id="start">Start</button><button id="solve">Solve</button><button id="update">Update</button><br/>	
 	<table id="sudoku">
 	
 	</table>
